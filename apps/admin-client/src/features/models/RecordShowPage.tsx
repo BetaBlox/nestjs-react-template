@@ -8,6 +8,14 @@ import DeleteButton from './DeleteButton';
 import ShowViewField from '@/components/ShowViewField';
 import { getAttributeType, getDashboard } from '@repo/admin-config';
 import { RecordApi } from '@/api/RecordApi';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@/components/Breadcrumb';
 
 export default function RecordShowPage() {
   const { modelName, id } = useParams();
@@ -41,24 +49,28 @@ export default function RecordShowPage() {
 
   return (
     <div>
-      <PageHeader
-        heading={getDisplayName(record)}
-        breadcrumbs={[
-          {
-            href: routeWithParams(MODEL, {
-              modelName,
-            }),
-            text: dashboard.name,
-            current: false,
-          },
-          {
-            href: '#',
-            text: getDisplayName(record),
-            current: true,
-          },
-        ]}
-        actions={actions}
-      />
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              to={routeWithParams(MODEL, {
+                modelName,
+              })}
+            >
+              {dashboard.name}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{getDisplayName(record)}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <PageHeader heading={getDisplayName(record)} actions={actions} />
 
       <div className="mt-6 border-t border-gray-100 bg-white px-4 shadow-md sm:rounded-lg">
         <dl className="divide-y divide-gray-100">

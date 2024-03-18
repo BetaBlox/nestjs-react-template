@@ -1,4 +1,7 @@
 import { FORGOT_PASSWORD } from '@/common/routes';
+import { Alert, AlertDescription, AlertTitle } from '@/components/Alert';
+import { Button } from '@/components/Button';
+import { Input } from '@/components/Input';
 import { useState } from 'react';
 import {
   useLocation,
@@ -48,11 +51,11 @@ function Login() {
                 Email
               </label>
               <div className="mt-2">
-                <input
+                <Input
+                  id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   required
                   value={data.email}
                   onChange={(e) =>
@@ -73,12 +76,11 @@ function Login() {
                 Password
               </label>
               <div className="mt-2">
-                <input
+                <Input
                   id="password"
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   required
                   value={data.password}
                   onChange={(e) =>
@@ -92,17 +94,19 @@ function Login() {
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                disabled={isLoggingIn}
-              >
-                {isLoggingIn ? 'Logging in...' : 'Login'}
-              </button>
+              <Button type="submit" disabled={isLoggingIn} className="w-full">
+                {isLoggingIn ? '...' : 'Login'}
+              </Button>
             </div>
 
             {actionData && actionData.error ? (
-              <p className="text-center text-red-500">{actionData.error}</p>
+              <Alert variant={'destructive'}>
+                <AlertTitle>Invalid Login Attempt</AlertTitle>
+                <AlertDescription>
+                  Looks like something went wrong. Please check your credentials
+                  and try again.
+                </AlertDescription>
+              </Alert>
             ) : null}
           </Form>
           <div className="mt-6 text-center text-sm text-gray-600">

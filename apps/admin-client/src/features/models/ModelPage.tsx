@@ -5,6 +5,15 @@ import { MODEL_RECORD_CREATE } from '@/common/routes';
 import { getDashboard } from '@repo/admin-config';
 import CollectionTable from './CollectionTable';
 import { useDebounceValue } from 'usehooks-ts';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@/components/Breadcrumb';
+import { Button } from '@/components/Button';
 
 export default function ModelPage() {
   const { modelName } = useParams();
@@ -27,25 +36,33 @@ export default function ModelPage() {
         />
       )}
       {dashboard.isCreatable() && (
-        <Link
-          to={routeWithParams(MODEL_RECORD_CREATE, {
-            modelName,
-          })}
-          className="rounded bg-green-600 px-3 py-2 font-medium text-white"
-        >
-          Add New
-        </Link>
+        <Button asChild>
+          <Link
+            to={routeWithParams(MODEL_RECORD_CREATE, {
+              modelName,
+            })}
+          >
+            Add New
+          </Link>
+        </Button>
       )}
     </div>
   );
 
   return (
     <div>
-      <PageHeader
-        heading={dashboard.name}
-        breadcrumbs={[{ href: '#', text: dashboard.name, current: true }]}
-        actions={actions}
-      />
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{dashboard.name}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <PageHeader heading={dashboard.name} actions={actions} />
       <CollectionTable
         dashboard={dashboard}
         modelName={modelName}

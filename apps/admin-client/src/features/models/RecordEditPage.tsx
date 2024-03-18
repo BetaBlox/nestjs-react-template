@@ -1,13 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import PageHeader from '@/components/PageHeader';
-import { modelDisplayName } from '@/common/model-display-name';
 import { useParams } from 'react-router-dom';
 import { routeWithParams } from '@repo/utils';
-import { MODEL } from '@/common/routes';
+import { MODEL, MODEL_RECORD } from '@/common/routes';
 import UpdateForm from '@/components/UpdateForm';
 import { AdminRecordPayload } from '@repo/types';
 import { getDashboard } from '@repo/admin-config';
 import { RecordApi } from '@/api/RecordApi';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@/components/Breadcrumb';
 
 export default function RecordEditPage() {
   const { modelName, id } = useParams();
@@ -28,23 +35,37 @@ export default function RecordEditPage() {
 
   return (
     <div>
-      <PageHeader
-        heading={dashboard.getDisplayName(record)}
-        breadcrumbs={[
-          {
-            href: routeWithParams(MODEL, {
-              modelName,
-            }),
-            text: modelDisplayName(modelName),
-            current: false,
-          },
-          {
-            href: '#',
-            text: dashboard.getDisplayName(record),
-            current: true,
-          },
-        ]}
-      />
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              to={routeWithParams(MODEL, {
+                modelName,
+              })}
+            ></BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              to={routeWithParams(MODEL_RECORD, {
+                modelName,
+                id,
+              })}
+            >
+              {dashboard.getDisplayName(record)}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Edit</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <PageHeader heading={dashboard.getDisplayName(record)} />
       <UpdateForm
         modelName={modelName}
         fields={fields}

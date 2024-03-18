@@ -7,6 +7,14 @@ import CreateForm from '@/components/CreateForm';
 import { getDashboard } from '@repo/admin-config';
 import { AdminRecordPayload } from '@repo/types';
 import { ModelApi } from '@/api/ModelApi';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+  BreadcrumbPage,
+} from '@/components/Breadcrumb';
 
 export default function RecordCreatePage() {
   const { modelName } = useParams();
@@ -25,23 +33,28 @@ export default function RecordCreatePage() {
 
   return (
     <div>
-      <PageHeader
-        heading={'Create'}
-        breadcrumbs={[
-          {
-            href: routeWithParams(MODEL, {
-              modelName,
-            }),
-            text: dashboard.name,
-            current: false,
-          },
-          {
-            href: '#',
-            text: 'Create',
-            current: true,
-          },
-        ]}
-      />
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink to="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbLink
+              to={routeWithParams(MODEL, {
+                modelName,
+              })}
+            >
+              {dashboard.name}
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Create</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <PageHeader heading={'Create'} />
       <CreateForm
         modelName={modelName}
         fields={fields}
