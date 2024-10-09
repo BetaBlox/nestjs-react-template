@@ -20,6 +20,7 @@ import {
 } from '@/components/table';
 import FilterForm, { Filter } from '@/features/models/filter-form';
 import { SortableTableHeader } from '@/components/sortable-table-header';
+import { ImpersonateButton } from '@/components/ImpersonateButton';
 
 interface Props {
   modelName: string;
@@ -192,14 +193,14 @@ export default function CollectionTable({ dashboard, modelName }: Props) {
             {paginatedResult.data.map((record) => (
               <TableRow
                 key={record.id}
-                onMouseDown={() =>
-                  navigate(
-                    routeWithParams(MODEL_RECORD, {
-                      modelName,
-                      id: String(record.id),
-                    }),
-                  )
-                }
+                // onMouseDown={() =>
+                //   navigate(
+                //     routeWithParams(MODEL_RECORD, {
+                //       modelName,
+                //       id: String(record.id),
+                //     }),
+                //   )
+                // }
                 className="cursor-pointer"
               >
                 <TableCell>{record.id}</TableCell>
@@ -234,6 +235,9 @@ export default function CollectionTable({ dashboard, modelName }: Props) {
                         <PencilIcon className="mr-1 h-3 w-3" /> Edit
                       </Link>
                     </Button>
+                  )}
+                  {modelName === 'User' && (
+                    <ImpersonateButton userId={String(record.id)} />
                   )}
                 </TableCell>
               </TableRow>

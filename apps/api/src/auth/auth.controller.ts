@@ -73,4 +73,9 @@ export class AuthController {
     const user = await this.userService.findByEmail(req.user['email']);
     await this.authService.changePassword(user.id, changePasswordDto.password);
   }
+
+  @Post('exchange-impersonation-token')
+  async exchangeImpersonationToken(@Body() body: { token: string }) {
+    return this.authService.exchangeImpersonationToken(body.token);
+  }
 }

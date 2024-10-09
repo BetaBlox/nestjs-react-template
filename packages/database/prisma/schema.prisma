@@ -11,18 +11,30 @@ datasource db {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  firstName     String
-  lastName      String
-  email         String         @unique
-  password      String
-  refreshToken  String?
-  imageUrl      String?
-  isAdmin       Boolean        @default(false)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @default(now())
-  Posts         Post[]
-  PasswordReset PasswordReset?
+  id                 Int                  @id @default(autoincrement())
+  firstName          String
+  lastName           String
+  email              String               @unique
+  password           String
+  refreshToken       String?
+  imageUrl           String?
+  isAdmin            Boolean              @default(false)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now())
+  Posts              Post[]
+  PasswordReset      PasswordReset?
+  ImpersonationTokens ImpersonationToken[]
+}
+
+// New model for impersonation tokens
+model ImpersonationToken {
+  id           Int      @id @default(autoincrement())
+  token        String   @unique
+  adminUserId  Int
+  targetUserId Int
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [targetUserId], references: [id])
 }
 
 model PasswordReset {

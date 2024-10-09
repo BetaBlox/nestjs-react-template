@@ -24,6 +24,14 @@ export class UsersService {
     });
   }
 
+  async findById(id: number): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
   async updateRefreshToken(
     id: number,
     refreshToken: string | null = null,

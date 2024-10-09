@@ -6,6 +6,8 @@ interface AuthProvider {
   isAuthenticated: boolean;
   email: string | null;
   user: User | null;
+  isImpersonated: boolean;
+  impersonatedBy: string | null;
 }
 
 export type RefreshTokensResponse = {
@@ -22,6 +24,8 @@ export const AuthProvider: AuthProvider = {
   isAuthenticated: false,
   email: null,
   user: null,
+  isImpersonated: false,
+  impersonatedBy: null,
 };
 
 export async function isAuthenticatedAsync() {
@@ -83,6 +87,7 @@ export async function loadUserProfile(): Promise<void> {
     const json = await response.json();
     AuthProvider.user = json;
     AuthProvider.email = json.email;
+    checkImpersonationFromToken(token);
   } else {
     await signout();
     window.location.href = '/';
@@ -252,4 +257,40 @@ export async function changePassword(password: string): Promise<Response> {
     body: JSON.stringify({ password }),
   });
   return response;
+}
+
+// Add this new function to the AuthProvider
+export async function impersonate(
+  accessToken: string,
+  refreshToken: string,
+): Promise<void> {
+  const decodedToken = jwtDecode<JwtPayload>(accessToken);
+  console.log('Impersonating!!!');
+  console.log('decodedToken', decodedToken);
+
+  //@ts-expect-error
+  const impersonatedBy = decodedToken.impersonatedBy;
+  AuthProvider.isAuthenticated = true;
+  AuthProvider.isImpersonated = true;
+  AuthProvider.impersonatedBy = impersonatedBy;
+  localStorage.setItem(
+    AUTH_TOKENS,
+    JSON.stringify({
+      accessToken,
+      refreshToken,
+    }),
+  );
+
+  await loadUserProfile();
+}
+
+export function checkImpersonationFromToken(accessToken: string) {
+  const decodedToken = jwtDecode<JwtPayload>(accessToken);
+  console.log('decodedToken', decodedToken);
+  //@ts-expect-error
+  const impersonatedBy = decodedToken.impersonatedBy;
+  if (impersonatedBy) {
+    AuthProvider.isImpersonated = true;
+    AuthProvider.impersonatedBy = impersonatedBy;
+  }
 }

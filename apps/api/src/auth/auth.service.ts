@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -122,5 +123,43 @@ export class AuthService {
         password: hash,
       },
     });
+  }
+
+  async exchangeImpersonationToken(
+    token: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const impersonationToken = await this.prisma.impersonationToken.findUnique({
+      where: { token },
+      include: { user: true },
+    });
+
+    if (!impersonationToken || impersonationToken.expiresAt < new Date()) {
+      throw new UnauthorizedException('Invalid or expired impersonation token');
+    }
+
+    const payload = {
+      sub: impersonationToken.user.id,
+      email: impersonationToken.user.email,
+      isImpersonated: true,
+      impersonatedBy: impersonationToken.adminUserId,
+    };
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+      expiresIn: '10m',
+    });
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: '7h',
+    });
+
+    await this.updateRefreshToken(impersonationToken.adminUserId, refreshToken);
+
+    // Delete the used token
+    await this.prisma.impersonationToken.delete({
+      where: { id: impersonationToken.id },
+    });
+
+    return { accessToken, refreshToken };
   }
 }

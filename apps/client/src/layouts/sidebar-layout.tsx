@@ -13,6 +13,7 @@ import { classNames } from '@repo/utils';
 import { HOME, LOGOUT, PROFILE } from '../common/routes';
 import { AuthProvider } from '@repo/auth';
 import { Button } from '@/components/button';
+import { ImpersonationBanner } from '@/components/ImpersonationBanner';
 
 type NavItem = {
   name: string;
@@ -39,6 +40,7 @@ export default function SidebarLayout() {
 
   return (
     <>
+      <ImpersonationBanner />
       <div>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
